@@ -17,6 +17,16 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
+/* Build LVGL at -O2 rather than the Arduino core's -Os.  Every LVGL source
+ * file includes this file first, so the pragma reaches all of LVGL (and any
+ * sketch file that includes lv_conf.h) without editing LVGL or the build
+ * settings, and it works the same in the Arduino IDE and arduino-cli.
+ * Measured on this board: about 10 % less LVGL render time, for about 80 KB
+ * more flash.  Delete it if flash is tight. */
+#if !defined(__ASSEMBLY__)
+#pragma GCC optimize ("O2")
+#endif
+
 /*If you need to include anything here, do it inside the `__ASSEMBLY__` guard */
 #if  0 && defined(__ASSEMBLY__)
 #include "my_include.h"
@@ -40,7 +50,11 @@
  * - LV_STDLIB_RTTHREAD:    RT-Thread implementation
  * - LV_STDLIB_CUSTOM:      Implement the functions externally
  */
-#define LV_USE_STDLIB_MALLOC    LV_STDLIB_BUILTIN
+/* LVGL's heap comes from lv_setup.hpp: PSRAM first, so the UI doesn't use up
+ * the internal RAM that Wi-Fi, TLS and the rest of the sketch need (draw
+ * layers and glyphs still prefer internal RAM).  LV_STDLIB_BUILTIN instead
+ * puts a fixed LV_MEM_SIZE pool in internal RAM: faster LVGL, less RAM left. */
+#define LV_USE_STDLIB_MALLOC    LV_STDLIB_CUSTOM
 #define LV_USE_STDLIB_STRING    LV_STDLIB_BUILTIN
 #define LV_USE_STDLIB_SPRINTF   LV_STDLIB_BUILTIN
 
@@ -66,7 +80,17 @@
  *====================*/
 
 /*Default display refresh, input device read and animation step period.*/
-#define LV_DEF_REFR_PERIOD  33      /*[ms]*/
+/* 5, not LVGL's usual 33: the panel refreshes every ~30.6 ms (32.7 Hz), and a
+ * 33 ms timer beats against it so a frame repeats every ~11 (visible judder).
+ * This period also drives lv_anim's timer.  Rendering is paced by the
+ * vsync-synchronised flip in lv_setup, so a short period costs nothing idle. */
+#define LV_DEF_REFR_PERIOD  5      /*[ms]*/
+
+/* Room for this many separately-invalidated areas per frame.  LVGL's default
+ * is 32; past it, LVGL gives up and redraws the WHOLE screen -- with 20 balls
+ * (old + new position each = 40 areas) that turned 32 fps into 5.  8 bytes
+ * of RAM per entry. */
+#define LV_INV_BUF_SIZE 128
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
@@ -369,7 +393,25 @@
 #define LV_ATTRIBUTE_LARGE_RAM_ARRAY
 
 /*Place performance critical functions into a faster memory (e.g RAM)*/
-#define LV_ATTRIBUTE_FAST_MEM
+/* ESP32-S3 IRAM fast-mem (OPT-IN): change the 0 below to 1 to relocate LVGL's
+ * hot software-render code (rgb565 blend loops, the mask engine, mem and math
+ * helpers) into internal RAM so it doesn't stall on flash-cache misses.
+ *
+ * Left OFF by default on purpose: enabling it can overflow IRAM at link time
+ * ("region 'iram0_0_seg' overflowed"), which is easy to trip and not obvious to
+ * fix, and on this bouncing-balls demo it makes no measurable difference today
+ * (DIRECT render is bound by PSRAM framebuffer bandwidth, not code fetch).
+ *
+ * When enabled: esp_attr.h is included so IRAM_ATTR is defined inside LVGL's .c
+ * files (they don't include Arduino.h); --gc-sections drops unused blend
+ * variants so only referenced functions actually consume IRAM. If the link
+ * overflows IRAM, set this back to 0 (or trim the attribute to rgb565 only). */
+#if 0  /* set to 1 to enable ESP32-S3 IRAM fast-mem */
+    #include "esp_attr.h"
+    #define LV_ATTRIBUTE_FAST_MEM IRAM_ATTR
+#else
+    #define LV_ATTRIBUTE_FAST_MEM
+#endif
 
 /*Export integer constant to binding. This macro is used with constants in the form of LV_<CONST> that
  *should also appear on LVGL binding API such as Micropython.*/
@@ -746,14 +788,19 @@
 #define LV_USE_SNAPSHOT 0
 
 /*1: Enable system monitor component*/
-#define LV_USE_SYSMON   0
+#define LV_USE_SYSMON   1
 #if LV_USE_SYSMON
     /*Get the idle percentage. E.g. uint32_t my_get_idle(void);*/
-    #define LV_SYSMON_GET_IDLE lv_timer_get_idle
+    /* Per-core idle time from the display library (FreeRTOS run-time stats), so
+     * the performance monitor reads "FPS | CPU (core 0 % | core 1 %)".  LVGL's own
+     * lv_timer_get_idle reads 0 % under lv_setup's frame clock (frameTick). */
+    #define LV_SYSMON_GET_IDLE cglcd7_7b_idle_percent_core0
+    #define LV_SYSMON_PROC_IDLE_AVAILABLE 1
+    #define LV_SYSMON_GET_PROC_IDLE cglcd7_7b_idle_percent_core1
 
     /*1: Show CPU usage and FPS count
      * Requires `LV_USE_SYSMON = 1`*/
-    #define LV_USE_PERF_MONITOR 0
+    #define LV_USE_PERF_MONITOR 0   /* the sketch shows its own FPS / CPU label */
     #if LV_USE_PERF_MONITOR
         #define LV_USE_PERF_MONITOR_POS LV_ALIGN_BOTTOM_RIGHT
 

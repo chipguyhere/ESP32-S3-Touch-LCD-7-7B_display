@@ -2,7 +2,7 @@
  * ui.cpp - Application UI for the LvglClaudeCodeStub example.
  *
  * A clean starting point for building an LVGL application on the ESP32-S3
- * ESP32-S3-Touch-LCD-7 (800x480 capacitive touchscreen).  Replace the body of ui_init()
+ * ESP32-S3-Touch-LCD-7B (1024x600 capacitive touchscreen).  Replace the body of ui_init()
  * with your own widgets.
  *
  * This stub doubles as a bring-up test:

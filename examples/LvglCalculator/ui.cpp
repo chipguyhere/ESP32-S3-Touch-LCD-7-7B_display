@@ -1,6 +1,6 @@
 /*
  * ui.cpp - A dark, iOS-styled four-function calculator for the Waveshare
- *          ESP32-S3-Touch-LCD-7, written in plain LVGL 9.
+ *          ESP32-S3-Touch-LCD-7B, written in plain LVGL 9.
  *
  * ---------------------------------------------------------------------------
  * Resolution independence
@@ -18,7 +18,7 @@
  *     are showing (display), picking the nearest built-in Montserrat size.
  *
  * This calculator was first designed for a 240x320 portrait panel, but the same
- * code lays out a proportionate keypad on this 800x480 landscape screen without
+ * code lays out a proportionate keypad on this 1024x600 landscape screen without
  * edits: the keys grow with the width and any extra vertical space simply makes
  * the number display roomier, exactly as it does on the real thing.
  *

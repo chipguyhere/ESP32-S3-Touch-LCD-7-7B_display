@@ -17,6 +17,16 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
+/* Build LVGL at -O2 rather than the Arduino core's -Os.  Every LVGL source
+ * file includes this file first, so the pragma reaches all of LVGL (and any
+ * sketch file that includes lv_conf.h) without editing LVGL or the build
+ * settings, and it works the same in the Arduino IDE and arduino-cli.
+ * Measured on this board: about 10 % less LVGL render time, for about 80 KB
+ * more flash.  Delete it if flash is tight. */
+#if !defined(__ASSEMBLY__)
+#pragma GCC optimize ("O2")
+#endif
+
 /*If you need to include anything here, do it inside the `__ASSEMBLY__` guard */
 #if  0 && defined(__ASSEMBLY__)
 #include "my_include.h"
@@ -40,7 +50,11 @@
  * - LV_STDLIB_RTTHREAD:    RT-Thread implementation
  * - LV_STDLIB_CUSTOM:      Implement the functions externally
  */
-#define LV_USE_STDLIB_MALLOC    LV_STDLIB_BUILTIN
+/* LVGL's heap comes from lv_setup.hpp: PSRAM first, so the UI doesn't use up
+ * the internal RAM that Wi-Fi, TLS and the rest of the sketch need (draw
+ * layers and glyphs still prefer internal RAM).  LV_STDLIB_BUILTIN instead
+ * puts a fixed LV_MEM_SIZE pool in internal RAM: faster LVGL, less RAM left. */
+#define LV_USE_STDLIB_MALLOC    LV_STDLIB_CUSTOM
 #define LV_USE_STDLIB_STRING    LV_STDLIB_BUILTIN
 #define LV_USE_STDLIB_SPRINTF   LV_STDLIB_BUILTIN
 
@@ -66,7 +80,11 @@
  *====================*/
 
 /*Default display refresh, input device read and animation step period.*/
-#define LV_DEF_REFR_PERIOD  33      /*[ms]*/
+/* 5, not LVGL's usual 33: the panel refreshes every ~30.6 ms (32.7 Hz), and a
+ * 33 ms timer beats against it so a frame repeats every ~11 (visible judder).
+ * This period also drives lv_anim's timer.  Rendering is paced by the
+ * vsync-synchronised flip in lv_setup, so a short period costs nothing idle. */
+#define LV_DEF_REFR_PERIOD  5      /*[ms]*/
 
 /*Default Dot Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  *(Not so important, you can adjust it to modify default sizes and spaces)*/
@@ -749,7 +767,12 @@
 #define LV_USE_SYSMON   0
 #if LV_USE_SYSMON
     /*Get the idle percentage. E.g. uint32_t my_get_idle(void);*/
-    #define LV_SYSMON_GET_IDLE lv_timer_get_idle
+    /* Per-core idle time from the display library (FreeRTOS run-time stats), so
+     * the performance monitor reads "FPS | CPU (core 0 % | core 1 %)".  LVGL's own
+     * lv_timer_get_idle reads 0 % under lv_setup's frame clock (frameTick). */
+    #define LV_SYSMON_GET_IDLE cglcd7_7b_idle_percent_core0
+    #define LV_SYSMON_PROC_IDLE_AVAILABLE 1
+    #define LV_SYSMON_GET_PROC_IDLE cglcd7_7b_idle_percent_core1
 
     /*1: Show CPU usage and FPS count
      * Requires `LV_USE_SYSMON = 1`*/

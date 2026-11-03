@@ -1,52 +1,60 @@
 /*
- * chipguy_ESP32S3_Touch_LCD_7_touch - GT911 capacitive touch driver for the
- * Waveshare ESP32-S3-Touch-LCD-7 development board.
+ * chipguy_ESP32S3_Touch_LCD_7_7B_touch - GT911 capacitive touch driver for the
+ * Waveshare ESP32-S3-Touch-LCD-7B development board.
  *
  * This file is a derivative of the TAMC_GT911 Arduino library:
  *   https://github.com/tamctec/gt911-arduino
  *   Copyright (c) TAMC <tamctec@gmail.com>
  *   Licensed under the Apache License, Version 2.0.
  *
- * Modified by chipguyhere for the ESP32-S3-Touch-LCD-7 board (fixed I2C pins
- * and 800x480 resolution; reset via the CH422G expander IO1 plus the INT GPIO).
+ * Modified by chipguyhere for the ESP32-S3-Touch-LCD-7B board (fixed I2C pins
+ * and the board's resolution; reset via the I2C expander EXIO1 plus the INT GPIO).
  * These modifications are likewise provided under the Apache License,
  * Version 2.0. See LICENSE-Apache-2.0.txt or
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 
 #include "Arduino.h"
-#include "chipguy_ESP32S3_Touch_LCD_7_touch.h"
+#include "chipguy_ESP32S3_Touch_LCD_7_7B_touch.h"
 
-ESP32S3_Touch_LCD_7_Touch::ESP32S3_Touch_LCD_7_Touch(ESP32S3_Touch_LCD_7_Board& board)
+ESP32S3_Touch_LCD_7_7B_Touch::ESP32S3_Touch_LCD_7_7B_Touch(ESP32S3_Touch_LCD_7_7B_Board& board)
   : _board(board) {
 }
 
-void ESP32S3_Touch_LCD_7_Touch::begin(uint8_t _addr) {
+void ESP32S3_Touch_LCD_7_7B_Touch::begin(uint8_t _addr) {
   addr = _addr;
   // Bring up the board's shared I2C bus + expander (idempotent; display.begin()
   // may already have done it), then reset the GT911 through the board.
   _board.begin();
+  if (_board.panelWidth()) { width = _board.panelWidth(); height = _board.panelHeight(); }
   reset();
   delay(50);
 }
 
-void ESP32S3_Touch_LCD_7_Touch::reset() {
-  // The board owns the GT911's reset line (IO1) and INT pin, so it performs
+void ESP32S3_Touch_LCD_7_7B_Touch::reset() {
+  // The board owns the GT911's reset line (EXIO1) and INT pin, so it performs
   // the power-on reset (which also latches the 0x5D I2C address).
   _board.touchReset();
 }
 
-void ESP32S3_Touch_LCD_7_Touch::setRotation(uint8_t rot) {
+void ESP32S3_Touch_LCD_7_7B_Touch::setRotation(uint8_t rot) {
   rotation = rot;
 }
 
-void ESP32S3_Touch_LCD_7_Touch::read(void) {
+void ESP32S3_Touch_LCD_7_7B_Touch::read(void) {
   uint8_t data[7];
 
   uint8_t pointInfo = readByteData(GT911_POINT_INFO);
   uint8_t bufferStatus = pointInfo >> 7 & 1;
   isLargeDetect = pointInfo >> 6 & 1;
   touches = pointInfo & 0xF;
+  // The GT911 reports at most 5 points here.  A larger count is a bad read --
+  // a failed I2C transfer reads back 0xFF, i.e. "ready, 15 touches" -- and
+  // trusting it would write past points[5] and over the members after it.
+  if (touches > 5) {
+    badReads++;
+    touches = 0;
+  }
   isTouched = touches > 0;
 
   if (bufferStatus == 1 && isTouched) {
@@ -58,7 +66,7 @@ void ESP32S3_Touch_LCD_7_Touch::read(void) {
   writeByteData(GT911_POINT_INFO, 0);
 }
 
-TP_Point ESP32S3_Touch_LCD_7_Touch::readPoint(uint8_t *data) {
+TP_Point ESP32S3_Touch_LCD_7_7B_Touch::readPoint(uint8_t *data) {
   uint16_t temp;
   uint8_t id = data[0];
   uint16_t x = data[1] + (data[2] << 8);
@@ -94,7 +102,7 @@ TP_Point ESP32S3_Touch_LCD_7_Touch::readPoint(uint8_t *data) {
 // 8-bit-register convenience helpers.  Each holds the shared bus with a Guard so
 // the multi-step transaction can't interleave with another task's bus traffic.
 
-void ESP32S3_Touch_LCD_7_Touch::writeByteData(uint16_t reg, uint8_t val) {
+void ESP32S3_Touch_LCD_7_7B_Touch::writeByteData(uint16_t reg, uint8_t val) {
   ThreadsafeWire::Guard g(_board.Wire);
   _board.Wire.beginTransmission(addr);
   _board.Wire.write(highByte(reg));
@@ -103,7 +111,7 @@ void ESP32S3_Touch_LCD_7_Touch::writeByteData(uint16_t reg, uint8_t val) {
   _board.Wire.endTransmission();
 }
 
-uint8_t ESP32S3_Touch_LCD_7_Touch::readByteData(uint16_t reg) {
+uint8_t ESP32S3_Touch_LCD_7_7B_Touch::readByteData(uint16_t reg) {
   ThreadsafeWire::Guard g(_board.Wire);
   uint8_t x;
   _board.Wire.beginTransmission(addr);
@@ -115,7 +123,7 @@ uint8_t ESP32S3_Touch_LCD_7_Touch::readByteData(uint16_t reg) {
   return x;
 }
 
-void ESP32S3_Touch_LCD_7_Touch::writeBlockData(uint16_t reg, uint8_t *val, uint8_t size) {
+void ESP32S3_Touch_LCD_7_7B_Touch::writeBlockData(uint16_t reg, uint8_t *val, uint8_t size) {
   ThreadsafeWire::Guard g(_board.Wire);
   _board.Wire.beginTransmission(addr);
   _board.Wire.write(highByte(reg));
@@ -126,7 +134,7 @@ void ESP32S3_Touch_LCD_7_Touch::writeBlockData(uint16_t reg, uint8_t *val, uint8
   _board.Wire.endTransmission();
 }
 
-void ESP32S3_Touch_LCD_7_Touch::readBlockData(uint8_t *buf, uint16_t reg, uint8_t size) {
+void ESP32S3_Touch_LCD_7_7B_Touch::readBlockData(uint8_t *buf, uint16_t reg, uint8_t size) {
   ThreadsafeWire::Guard g(_board.Wire);
   _board.Wire.beginTransmission(addr);
   _board.Wire.write(highByte(reg));

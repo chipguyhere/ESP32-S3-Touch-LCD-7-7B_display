@@ -2,9 +2,10 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-ESP32S3_Touch_LCD_7	KEYWORD1
-ESP32S3_Touch_LCD_7_Touch	KEYWORD1
+ESP32S3_Touch_LCD_7_7B	KEYWORD1
+ESP32S3_Touch_LCD_7_7B_Touch	KEYWORD1
 TP_Point	KEYWORD1
+RasterFn	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -13,13 +14,57 @@ TP_Point	KEYWORD1
 begin	KEYWORD2
 setBacklight	KEYWORD2
 getFramebuffer	KEYWORD2
+getFramebuffer2	KEYWORD2
+getFramebuffer3	KEYWORD2
+framebufferByIndex	KEYWORD2
+allocateSecondFramebuffer	KEYWORD2
+allocateThirdFramebuffer	KEYWORD2
+setDrawBuffer	KEYWORD2
+getDrawBuffer	KEYWORD2
+getDrawTarget	KEYWORD2
+setActiveFramebuffer	KEYWORD2
+activeFramebuffer	KEYWORD2
+pendingFramebuffer	KEYWORD2
+frameTickMs	KEYWORD2
+frameCount	KEYWORD2
+framePeriodUs	KEYWORD2
+setRasterRows	KEYWORD2
+bounceRows	KEYWORD2
+setBounceFillMode	KEYWORD2
+getBounceFillMode	KEYWORD2
+setColorMode	KEYWORD2
+getColorMode	KEYWORD2
+setPalette	KEYWORD2
+rgb565to332	KEYWORD2
+setHalfResolution	KEYWORD2
+halfResolution	KEYWORD2
+fbWidth	KEYWORD2
+fbHeight	KEYWORD2
+setRowCache	KEYWORD2
+rowCacheEnabled	KEYWORD2
+markRowsChanged	KEYWORD2
+setFillAhead	KEYWORD2
+paceWrites	KEYWORD2
+syncToPsram	KEYWORD2
+writeBackRange	KEYWORD2
+setRangeWriteBack	KEYWORD2
+psramClockMHz	KEYWORD2
+cglcd7_7b_idle_percent_core0	KEYWORD2
+cglcd7_7b_idle_percent_core1	KEYWORD2
 width	KEYWORD2
 height	KEYWORD2
 copyPixels	KEYWORD2
+pushImage	KEYWORD2
 fillRect	KEYWORD2
 fillScreen	KEYWORD2
 drawPixel	KEYWORD2
 flush	KEYWORD2
+scroll	KEYWORD2
+setScrollOffset	KEYWORD2
+setSprite	KEYWORD2
+clearSprite	KEYWORD2
+beginFlashMessage	KEYWORD2
+endFlashMessage	KEYWORD2
 reset	KEYWORD2
 setRotation	KEYWORD2
 read	KEYWORD2
@@ -38,3 +83,15 @@ PIN_LCD_DE	LITERAL1
 PIN_LCD_VSYNC	LITERAL1
 PIN_LCD_HSYNC	LITERAL1
 PIN_LCD_PCLK	LITERAL1
+BOUNCE_FILL_DEFAULT	LITERAL1
+BOUNCE_FILL_SAME_CORE	LITERAL1
+BOUNCE_FILL_OTHER_CORE	LITERAL1
+BOUNCE_FILL_GDMA	LITERAL1
+COLOR_RGB565	LITERAL1
+COLOR_RGB332	LITERAL1
+LCD7_7B_DEFAULT_PCLK_HZ	LITERAL1
+LCD7_7B_BOUNCE_ROWS	LITERAL1
+LCD7_7B_MAX_WIDTH	LITERAL1
+LCD7_7B_MAX_HEIGHT	LITERAL1
+LV_SETUP_DISPLAY_CORE	LITERAL1
+LV_SETUP_ROT_BAND_BYTES	LITERAL1

@@ -1,6 +1,6 @@
 /*
- * chipguy_ESP32S3_Touch_LCD_7_dirtyrects - dirty-rectangle bookkeeping for the
- * 90/270-degree LVGL reconciliation path (see chipguy_ESP32S3_Touch_LCD_7_rotate.hpp).
+ * chipguy_ESP32S3_Touch_LCD_7_7B_dirtyrects - dirty-rectangle bookkeeping for the
+ * 90/270-degree LVGL reconciliation path (see chipguy_ESP32S3_Touch_LCD_7_7B_rotate.hpp).
  *
  * This header is intentionally PURE: it depends only on <stdint.h> and has no
  * Arduino/LVGL/hardware dependencies, so the rectangle math can be unit-tested
@@ -10,7 +10,7 @@
  * row-major) framebuffer space.  A rectangle with x1>x2 or y1>y2 is empty.
  *
  * BOUNDED STORAGE, NO PRECISION LOSS:
- *   The list holds a fixed CG_LCD7_MAX_DIRTY_RECTS slots (no heap).  Subtraction
+ *   The list holds a fixed CG_LCD7_7B_MAX_DIRTY_RECTS slots (no heap).  Subtraction
  *   fragments rectangles and can need more slots than it has; the danger is that
  *   collapsing the list to a bounding box on overflow would fill in the HOLES
  *   carved by subtract(), and the deferred copy would then repaint stale pixels
@@ -32,8 +32,8 @@
  * MIT License
  */
 
-#ifndef CHIPGUY_ESP32S3_TOUCH_LCD_7_DIRTYRECTS_H
-#define CHIPGUY_ESP32S3_TOUCH_LCD_7_DIRTYRECTS_H
+#ifndef CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_DIRTYRECTS_H
+#define CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_DIRTYRECTS_H
 
 #include <stdint.h>
 
@@ -41,8 +41,8 @@
 // hole-carrying list within this bound by executing the smallest pending copy
 // immediately instead of growing.  Bump it to defer more copies before any
 // eager flush kicks in.
-#ifndef CG_LCD7_MAX_DIRTY_RECTS
-#define CG_LCD7_MAX_DIRTY_RECTS 64
+#ifndef CG_LCD7_7B_MAX_DIRTY_RECTS
+#define CG_LCD7_7B_MAX_DIRTY_RECTS 64
 #endif
 
 struct CGRect {
@@ -86,7 +86,7 @@ public:
     // coalescing to a bounding box.
     void add(const CGRect& r) {
         if (r.empty()) return;
-        if (_count >= CG_LCD7_MAX_DIRTY_RECTS) makeRoom();
+        if (_count >= CG_LCD7_7B_MAX_DIRTY_RECTS) makeRoom();
         _rects[_count++] = r;
     }
 
@@ -173,10 +173,10 @@ private:
         overflowCount++;
     }
 
-    CGRect     _rects[CG_LCD7_MAX_DIRTY_RECTS];
+    CGRect     _rects[CG_LCD7_7B_MAX_DIRTY_RECTS];
     CGRectSink _sink;
     void*      _sinkCtx;
     int        _count;
 };
 
-#endif // CHIPGUY_ESP32S3_TOUCH_LCD_7_DIRTYRECTS_H
+#endif // CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_DIRTYRECTS_H

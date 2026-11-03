@@ -1,15 +1,16 @@
 /*
- * chipguy_ESP32S3_Touch_LCD_7_touch - GT911 capacitive touch driver for the
- * Waveshare ESP32-S3-Touch-LCD-7 development board.
+ * chipguy_ESP32S3_Touch_LCD_7_7B_touch - GT911 capacitive touch driver for the
+ * Waveshare ESP32-S3-Touch-LCD-7 and -7B development boards.
  *
  * This file is a derivative of the TAMC_GT911 Arduino library:
  *   https://github.com/tamctec/gt911-arduino
  *   Copyright (c) TAMC <tamctec@gmail.com>
  *   Licensed under the Apache License, Version 2.0.
  *
- * Modifications by chipguyhere: adapted for the ESP32-S3-Touch-LCD-7 board
- * (fixed I2C pins and 800x480 resolution; reset sequence via the CH422G I2C
- * expander IO1 plus the INT GPIO, which this board does wire). These
+ * Modifications by chipguyhere: adapted for the ESP32-S3-Touch-LCD-7 and -7B
+ * boards (fixed I2C pins; 800x480 or 1024x600 resolution, from the board;
+ * reset sequence via the I2C expander EXIO1 plus the INT GPIO, which these
+ * boards do wire). These
  * modifications are likewise provided under the Apache License, Version 2.0.
  *
  * You may obtain a copy of the License in the file LICENSE-Apache-2.0.txt
@@ -23,12 +24,12 @@
  * under the License.
  */
 
-#ifndef CHIPGUY_ESP32S3_TOUCH_LCD_7_TOUCH_H
-#define CHIPGUY_ESP32S3_TOUCH_LCD_7_TOUCH_H
+#ifndef CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_TOUCH_H
+#define CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_TOUCH_H
 
 #include "Arduino.h"
 #include <Wire.h>
-#include <ESP32S3_Touch_LCD_7_Board.h>   // shared I2C bus + expander
+#include <ESP32S3_Touch_LCD_7_7B_Board.h>   // shared I2C bus + expander
 
 #define GT911_ADDR1 (uint8_t)0x5D
 #define GT911_ADDR2 (uint8_t)0x14
@@ -172,11 +173,11 @@ class TP_Point {
     uint8_t size;
 };
 
-class ESP32S3_Touch_LCD_7_Touch {
+class ESP32S3_Touch_LCD_7_7B_Touch {
   public:
-    // Takes the board that owns the shared I2C bus and the CH422G expander;
+    // Takes the board that owns the shared I2C bus and the I2C expander;
     // the GT911 talks over board.Wire and is reset through it.
-    ESP32S3_Touch_LCD_7_Touch(ESP32S3_Touch_LCD_7_Board& board);
+    ESP32S3_Touch_LCD_7_7B_Touch(ESP32S3_Touch_LCD_7_7B_Board& board);
     void begin(uint8_t _addr=GT911_ADDR1);
     void reset();
     void setRotation(uint8_t rot);
@@ -185,6 +186,7 @@ class ESP32S3_Touch_LCD_7_Touch {
     uint8_t touches = 0;
     bool isTouched = false;
     TP_Point points[5];
+    uint32_t badReads = 0;   // status reads rejected as corrupt (see read())
 
   private:
     TP_Point readPoint(uint8_t *data);
@@ -193,16 +195,17 @@ class ESP32S3_Touch_LCD_7_Touch {
     void writeBlockData(uint16_t reg, uint8_t *val, uint8_t size);
     void readBlockData(uint8_t *buf, uint16_t reg, uint8_t size);
 
-    // The board owns the shared I2C bus (board.Wire), the CH422G expander, and
+    // The board owns the shared I2C bus (board.Wire), the I2C expander, and
     // the GT911 INT pin used for reset/address selection.
-    ESP32S3_Touch_LCD_7_Board& _board;
+    ESP32S3_Touch_LCD_7_7B_Board& _board;
 
     // The GT911 on this board reports coordinates already aligned with the
     // panel (matching Waveshare's demo), so the default is a pass-through.
     uint8_t rotation = ROTATION_INVERTED;
     uint8_t addr;
-    static const uint16_t width = 800;
-    static const uint16_t height = 480;
+    // The panel's size, from the board begin() identified (the -7B's until then).
+    uint16_t width = 1024;
+    uint16_t height = 600;
 };
 
-#endif // CHIPGUY_ESP32S3_TOUCH_LCD_7_TOUCH_H
+#endif // CHIPGUY_ESP32S3_TOUCH_LCD_7_7B_TOUCH_H
