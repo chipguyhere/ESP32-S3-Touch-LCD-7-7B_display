@@ -27,8 +27,8 @@
  *   - Flash Size: "8MB (64Mb)" works on both boards ("16MB (128Mb)" uses all of
  *     the -7B's flash)
  *   - PSRAM: "OPI PSRAM"   (the board has 8MB PSRAM)
- *   - Serial output: the USB-C port marked UART (on the -7B, with the
- *     UART1/UART2 switch on UART1).  Serial0 always prints there.
+ *   - Serial output: the USB-C port marked UART, with the UART1/UART2
+ *     switch on UART1.  Serial0 always prints there.
  *
  ******************************************************************************/
 
@@ -42,8 +42,8 @@
 #include "ui.h"
 
 void setup() {
-    // Serial0 is UART0, which reaches the USB-C port marked UART (on the
-    // -7B, when the UART1/UART2 switch is on UART1).
+    // Serial0 is UART0, which reaches the USB-C port marked UART when the
+    // UART1/UART2 switch is on UART1.
     Serial0.begin(115200);
 
     // Initialize display, touch, and LVGL.  The UI adapts to whatever

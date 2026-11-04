@@ -27,8 +27,8 @@
  *     16M Flash (3MB APP/9.9MB FATFS) use all of it.
  *   - Arduino Runs On: Core 0 (Core 1 works too; the balls are drawn on core 1
  *     either way, by the display's fill task)
- *   - Serial output: the USB-C port marked UART (on the -7B, with the
- *     UART1/UART2 switch on UART1).  Serial0 prints a status line every second.
+ *   - Serial output: the USB-C port marked UART, with the UART1/UART2
+ *     switch on UART1.  Serial0 prints a status line every second.
  *
  * Copyright (c) 2026 chipguyhere
  * MIT License

@@ -49,8 +49,8 @@ In the **Tools** menu, set:
 ### Which USB port
 
 Each board has two USB-C ports. Plug into the one marked **UART** to upload and
-to see `Serial0` messages. On the -7B, a small slide switch next to it, marked
-**UART1 / UART2**, must be on **UART1**, or nothing gets through.
+to see `Serial0` messages. A small slide switch near it, marked **UART1 / UART2**,
+must be on **UART1**, or nothing gets through.
 
 ---
 
@@ -185,7 +185,8 @@ the rest:
 - **RS-485, CAN, an I²C header and more** — see
   [README-board.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-board.md).
 
-Those files were written for the -7B; the -7's version of each is still to come.
+Each of those files covers both boards, with a section on what is different on
+the -7.
 
 ---
 
@@ -203,8 +204,9 @@ Those files were written for the -7B; the -7's version of each is still to come.
   battery, and everything else on the board.
 - [README-limitations-errata.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-limitations-errata.md)
   — anyone choosing a board: what it can't do.
-- [schematic-description.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description.md)
-  — engineers and LLMs without the drawing: the -7B's schematic in text.
+- [schematic-description-7.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7.md)
+  and [schematic-description-7B.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7B.md)
+  — engineers and LLMs without the drawing: each board's schematic in text.
 
 ---
 

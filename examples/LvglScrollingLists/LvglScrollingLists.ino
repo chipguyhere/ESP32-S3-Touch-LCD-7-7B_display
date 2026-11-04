@@ -32,8 +32,8 @@
  *     16M Flash (3MB APP/9.9MB FATFS) use all of it.
  *   - Arduino Runs On: Core 0 for the best frame rate (Core 1 works too; the
  *     screen then shows a note, and its "Why?" button explains the choice)
- *   - Serial output: the USB-C port marked UART (on the -7B, with the
- *     UART1/UART2 switch on UART1).  Serial0 always prints there.
+ *   - Serial output: the USB-C port marked UART, with the UART1/UART2
+ *     switch on UART1.  Serial0 always prints there.
  *
  * Copyright (c) 2026 chipguyhere
  * MIT License
@@ -48,8 +48,8 @@
 #include "ui.h"
 
 void setup() {
-    // Serial0 is UART0, which reaches the USB-C port marked UART (on the
-    // -7B, when the UART1/UART2 switch is on UART1).
+    // Serial0 is UART0, which reaches the USB-C port marked UART when the
+    // UART1/UART2 switch is on UART1.
     Serial0.begin(115200);
 
     // Initialize display, touch, and LVGL.

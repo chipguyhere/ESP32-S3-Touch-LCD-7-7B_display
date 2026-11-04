@@ -17,8 +17,8 @@
  *   - Flash Size: 8MB (64Mb) and Partition Scheme: 8M with spiffs (3MB APP/1.5MB
  *     SPIFFS) work on both boards.  The -7B has 16 MB: 16MB (128Mb) and
  *     16M Flash (3MB APP/9.9MB FATFS) use all of it.
- *   - Serial output: the USB-C port marked UART (on the -7B, with the
- *     UART1/UART2 switch on UART1).  Serial0 always prints there.
+ *   - Serial output: the USB-C port marked UART, with the UART1/UART2
+ *     switch on UART1.  Serial0 always prints there.
  *
  * Copyright (c) 2025 chipguyhere
  * MIT License
@@ -47,8 +47,8 @@
 
 
 void setup() {
-    // Serial0 is UART0, which reaches the USB-C port marked UART (on the
-    // -7B, when the UART1/UART2 switch is on UART1).
+    // Serial0 is UART0, which reaches the USB-C port marked UART when the
+    // UART1/UART2 switch is on UART1.
     Serial0.begin(115200);
 
     // Initialize display, touch, and LVGL.

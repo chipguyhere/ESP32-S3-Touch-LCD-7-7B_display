@@ -6,7 +6,7 @@ measured. Other references:
 - The board itself (the I/O expander, power, RS-485) is in the board library's
   [README-engineering.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-engineering.md).
 - The schematic is in its
-  [schematic-description.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description.md).
+  [schematic-description-7B.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7B.md).
 
 All measurements are from the bench, 2026-10-26/27, on three -7B units,
 unless they say -7. "Arduino on
@@ -70,10 +70,14 @@ start-up and none afterwards. The separate 7B library's build shows the same
 counts, so this predates the merge; the -7 shows none. A timing test put all
 of them inside `lv_setup.begin()`, before the ball band exists, so the
 balls' crowded first frames aren't the cause. With the default GDMA fill the
-same start-up gives 2 late and 0 dropped. Likely cause (inferred): in the CPU
-fill modes `paceWrites()` returns at once, so the clears of framebuffers 2
-and 3 (1.2 MB each on the -7B) run unpaced against the fill's PSRAM reads.
-**TODO:** pace `_clearPaced()` in the CPU modes too, and re-measure.
+same start-up gives 2 late and 0 dropped. The cause: in the CPU fill modes
+`paceWrites()` returns at once, so the clears of framebuffers 2 and 3 (1.2 MB
+each on the -7B) ran unpaced -- usually from core 0, against the fill's
+cache and PSRAM reads on core 1. Fixed 2026-11-03: in the CPU modes
+`_clearPaced()` writes 4 KB pieces only while the fill task is idle (queue
+empty, task blocked) and skips the write-back the CPU fill doesn't need.
+Start-up is now 0 late / 0 dropped on both boards with Arduino on either core
+(three -7B boots), for about 100 ms more in `lv_setup.begin()` on the -7B.
 
 ---
 
