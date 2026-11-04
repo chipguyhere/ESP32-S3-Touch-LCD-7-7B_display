@@ -22,7 +22,8 @@ replace its placeholder UI with your own.
 
 There is no Arduino Library Manager entry. Install from GitHub ZIP files:
 
-1. Download **this library** and **`chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board`**
+1. Download **this library** and
+   **[`ESP32-S3-Touch-LCD-7-7B_board`](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board)**
    (its partner — this library needs it). On each GitHub page, click
    **Code ▸ Download ZIP**.
 2. Unzip both. Move the folders into your Arduino **libraries** folder:
