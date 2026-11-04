@@ -4,9 +4,9 @@ How the driver works, why it is shaped the way it is, and what each piece
 measured. Other references:
 
 - The board itself (the I/O expander, power, RS-485) is in the board library's
-  [README-engineering.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-engineering.md).
+  [README-engineering.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-engineering.md).
 - The schematic is in its
-  [schematic-description-7B.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7B.md).
+  [schematic-description-7B.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/schematic-description-7B.md).
 
 All measurements are from the bench, 2026-10-26/27, on three -7B units,
 unless they say -7. "Arduino on
@@ -22,7 +22,7 @@ merged into this one, which drives either board.
 ## Two panels, one driver
 
 `begin()` brings up the board library, which identifies the board (see its
-[README-engineering.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-engineering.md#telling-the-two-boards-apart)),
+[README-engineering.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-engineering.md#telling-the-two-boards-apart)),
 then `_applyBoard()` sets:
 
 | | -7 | -7B |
@@ -460,7 +460,7 @@ backward.
 CH422G has no PWM, so 1–100 is simply on. The PWM is inverted by the
 hardware (it injects into the converter's feedback); the board library hides
 that. See the board's
-[README-engineering.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-engineering.md#backlight-18).
+[README-engineering.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-engineering.md#backlight-18).
 
 ## Touch
 
@@ -474,8 +474,7 @@ now rejected and counted in `badReads`.
 
 - **Flash-write overlay** (`beginFlashMessage()`): while flash writes stall
   PSRAM, the interrupt fills the bounce buffers from an SRAM bitmap.
-- **Desync workaround**, disabled; see
-  [extras/DESYNC_WORKAROUND.md](extras/DESYNC_WORKAROUND.md).
+- **Desync workaround**, disabled, behind `LCD7_7B_BOUNCE_DESYNC_WORKAROUND`.
 - **Sprites and hardware scroll**, in the fill path. They are not used by the
   renderer path, and not supported at half resolution.
 
@@ -492,9 +491,3 @@ now rejected and counted in `badReads`.
 | Fill-ahead with GDMA | more late fills |
 | Fusing the half-resolution doubling and averaging into one pass | slower (branches) |
 | The -7's cooperative dual-core fill | dropped in the port |
-
-## Tools
-
-[extras/bench/](extras/bench/README.md) has the measurement tools: a per-core
-task profiler (`coreprof.h`), a rotation test that checks pixel placement and
-framebuffer agreement in all four rotations, and the bench and soak scripts.

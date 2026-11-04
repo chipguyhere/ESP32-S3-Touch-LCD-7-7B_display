@@ -178,12 +178,12 @@ the rest:
 
 - **Battery (-7B)** — a socket for a single lithium cell, which charges from the
   UART USB-C port. The board library reads the battery voltage. See
-  [README-power.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-power.md).
+  [README-power.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-power.md).
 - **microSD card slot** — you bring your own card driver. It does not share
   anything with the screen. See
-  [README-sdcard.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-sdcard.md).
+  [README-sdcard.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-sdcard.md).
 - **RS-485, CAN, an I²C header and more** — see
-  [README-board.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-board.md).
+  [README-board.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-board.md).
 
 Each of those files covers both boards, with a section on what is different on
 the -7.
@@ -195,17 +195,13 @@ the -7.
 - [README-engineering.md](README-engineering.md) — engineers: how the display
   driver works inside, the measurements behind the advice above, and what was
   tried and rejected.
-- [extras/bench/](extras/bench/README.md) — engineers: the tools used to measure
-  it.
-- [extras/DESYNC_WORKAROUND.md](extras/DESYNC_WORKAROUND.md) — engineers: a
-  disabled driver workaround, kept for reference.
-- [The board library's README](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README.md)
+- [The board library's README](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README.md)
   — the shared I²C bus, the expander chip, how the two boards are told apart,
   battery, and everything else on the board.
-- [README-limitations-errata.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/README-limitations-errata.md)
+- [README-limitations-errata.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/README-limitations-errata.md)
   — anyone choosing a board: what it can't do.
-- [schematic-description-7.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7.md)
-  and [schematic-description-7B.md](../chipguy_Waveshare-ESP32-S3-Touch-LCD-7-7B_board/schematic-description-7B.md)
+- [schematic-description-7.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/schematic-description-7.md)
+  and [schematic-description-7B.md](https://github.com/chipguyhere/ESP32-S3-Touch-LCD-7-7B_board/blob/main/schematic-description-7B.md)
   — engineers and LLMs without the drawing: each board's schematic in text.
 
 ---
